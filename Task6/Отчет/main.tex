@@ -1,0 +1,78 @@
+%!TEX TS-program = xelatex
+
+% Шаблон документа LaTeX создан в 2018 году
+% Алексеем Подчезерцевым
+% В качестве исходных использованы шаблоны
+% 	Данилом Фёдоровых (danil@fedorovykh.ru) 
+%		https://www.writelatex.com/coursera/latex/5.2.2
+%	LaTeX-шаблон для русской кандидатской диссертации и её автореферата.
+%		https://github.com/AndreyAkinshin/Russian-Phd-LaTeX-Dissertation-Template
+
+\documentclass[a4paper,14pt]{article}
+
+\input{data/preambular.tex}
+\begin{document} % конец преамбулы, начало документа
+\input{data/title.tex}
+\setcounter{page}{2} % нумерация
+
+\renewcommand\contentsname{\centering {\normalsize Содержание}}
+\tableofcontents
+\newpage
+
+\section*{Постановка задачи}
+\addcontentsline{toc}{section}{Постановка задачи}
+
+Использовать классы \textit{thread}, \textit{mutex} (или более подходящий подкласс), \textit{lock\_guard} / \textit{unique\_lock}, \textit{condition\_variable}, \textit{atomic}, \textit{future} и \textit{async} при решении заданий (в зависимости от условий задания).
+Программа дуэль: есть секундант (отдельный поток), отсчитывающий время, и есть два дуэлянта (еще два потока), получающих сигнал о выстреле независимо (параллельно), реализовать выстрелы: первого стрелка – «первый», второго – «второй» и реализовать механизм в соответствии с вариантом 18 (3):
+один стрелок реагирует мгновенно, стреляет с задержкой, второй наоборот, реализовать таймеры или иной механизм иллюстрирующий эти задержки.
+
+\newpage
+
+\section{Основная часть}
+\subsection{Общая идея решения задачи}
+Для решения задачи были использованы классы \textit{thread}, \textit{condition\_variable} и \textit{mutex} (\textit{unique\_lock}).
+\subsection{Структура и принципы действия}
+Программа содержит глобальные переменные \textit{mutex} \textit{lock}, \textit{condition\_variable} \textit{cv} и \textit{bool} \textit{ready}.
+
+В начале программы инициализируется генератор случайных чисел с помощью функций \textit{srand} и \textit{time}. Далее создаются 3 новых объекта потока: секундант (\textit{sec}) и два дуэлянта (\textit{d1} и \textit{d2}), и связываются с потоком выполнения, новый поток выполнения вызывает, соответственно, функции \textit{go}, \textit{threadFunction1} и \textit{threadFunction2}.
+
+Функция \textit{go} для защиты от одновременного доступа нескольких потоков создает экземпляр класса \textit{unique\_lock}, который принимает не захваченный \textit{mutex} \textit{lock} в конструкторе. Далее выводится сообщение о готовности, с помощью метода \textit{sleep\_for} имитируется задержка секунданта перед стартом, глобальная переменная \textit{ready} меняет свое значение на \textit{true} и подается сигнал для старта. После чего \textit{condition\_variable} \textit{cv} уведомляет все ожидающие потоки.
+
+Функция \textit{threadFunction1} принимает сигнал от \textit{cv} мгновенно выводит сообщение о получении сигнала, имитирует задержку с помощью метода \textit{sleep\_for} и выводит сообщение о выстреле.
+
+Функция \textit{threadFunction2} принимает сигнал от \textit{cv} имитирует задержку перед получением сигнала с помощью метода \textit{sleep\_for} и выводит сообщение о получении сигнала и выстреле.
+
+\subsection{Процедура получения исполняемых программных модулей}
+Программный код был скомпилирован с среде \textit{Visual Studio 2017}. Код программы содержится в одном исходном файле. Для ускоренной компиляции программы используются предварительно откомпилированные заголовки \textit{"pch.h"}. Помимо этого никаких дополнительных ключей не добавлялось, использовались ключи, которые добавляются по умолчанию.
+\subsection{Результаты тестирования}
+Тестирование программы представлено в файле \textit{"Task6.cpp"} в функции \textit{Main()}. Ожидаемый вывод функции:
+\begin{verbatim}
+Ready..
+Go!
+Pushkin react
+Dantes react
+Dantes shoot
+Pushkin shoot
+\end{verbatim}
+
+\newpage
+\setcounter{figure}{1} 
+\setcounter{section}{1} 
+\setcounter{subsection}{1} 
+
+\begin{center}
+	\section*{Приложение А}
+	полный код программы
+	\addcontentsline{toc}{section}{Приложение А}
+	
+	\renewcommand{\subsection}{\Asbuk{section}.\arabic{subsection}}
+	\setcounter{subsection}{1} 
+	\textbf{\subsection{  - Task6.cpp}}
+	\addcontentsline{toc}{subsection}{Task6.cpp}
+	\lstinputlisting[language=C++]{../Task6/Task6.cpp}
+	
+\end{center}
+
+
+
+\end{document} % конец документа
