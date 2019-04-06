@@ -1,0 +1,116 @@
+%!TEX TS-program = xelatex
+
+% Шаблон документа LaTeX создан в 2018 году
+% Алексеем Подчезерцевым
+% В качестве исходных использованы шаблоны
+% 	Данилом Фёдоровых (danil@fedorovykh.ru) 
+%		https://www.writelatex.com/coursera/latex/5.2.2
+%	LaTeX-шаблон для русской кандидатской диссертации и её автореферата.
+%		https://github.com/AndreyAkinshin/Russian-Phd-LaTeX-Dissertation-Template
+
+\documentclass[a4paper,14pt]{article}
+
+\input{data/preambular.tex}
+\begin{document} % конец преамбулы, начало документа
+\input{data/title.tex}
+\setcounter{page}{2} % нумерация
+
+\renewcommand\contentsname{\centering {\normalsize Содержание}}
+\tableofcontents
+\newpage
+
+\section*{Постановка задачи}
+\addcontentsline{toc}{section}{Постановка задачи}
+
+Используя механизм шаблонных классов (\textit{template}) написать классы для динамических структур данных и итераторов для их обхода в соответствии с вариантом 17:
+\begin{enumerate}
+	\item Бинарное дерево - \textit{ForwardIterator} с условием
+	\item Очередь - \textit{ForwardIterator}
+\end{enumerate}
+
+\newpage
+
+\section{Основная часть}
+\subsection{Общая идея решения задачи}
+Для решения задачи были созданы шаблонные классы \textit{Queue} и \textit{BinaryTree} с помощью агрегирования классов итераторов (\textit{Iterator} и \textit{ConstIterator}, и \textit{TreeIterator} и \textit{ConstTreeIterator} соответственно), классы итераторов в свою очередь содержат структуру узла \textit{Node} или \textit{TreeNode} соответственно.
+\subsection{Структура и принципы действия}
+Классы \textit{Queue}, \textit{Iterator} и \textit{ConstIterator} содержат в себе структуру узла (\textit{Node}), который состоит из элемента очереди и указателя на следующий элемент. 
+
+Классы \textit{BinaryTree}, \textit{TreeIterator} и \textit{ConstTreeIterator} содержат в себе структуру узла (\textit{TreeNode}), который состоит из элемента бинарного дерева и указателей на родительский, левый и правый элементы. 
+
+Класс \textit{Queue} содержит в себе указатель на начало очереди и конец очереди (\textit{Node*}) и размер, определены конструктор умолчания, конструктор копирования, деструктор, а также такие стандартные методы, как \textit{begin} (возвращает указатель на первый элемент),\textit{end} (возвращает указатель на последний элемент), \textit{len} (возвращает размер очереди), \textit{push} (добавляет элемент в конец очереди), \textit{pop} (удаляет элемент из начала очереди и возвращает его).
+
+Класс \textit{BinaryTree} содержит в себе указатель на начальную вершину бинарного дерева (\textit{TreeNode*}), указатель на функцию, которая задает условие добавления элемента в бинарное дерево, определены конструктор с параметром (принимает указатель на функцию), конструктор копирования, деструктор, а также такие стандартные методы, как \textit{begin} (возвращает указатель на вершину дерева),\textit{end} (возвращает нулевой указатель), \textit{push} (добавляет элемент в бинарное дерево в соответствии с условием).
+
+Каждый класс содержит классы \textit{Iterator} и \textit{ConstIterator}, или \textit{TreeIterator} и\\ \textit{ConstTreeIterator}, которые содержат указатель на элемент структуры \textit{Node} или \textit{TreeNode}, конструктор с параметром, для которых определены операторы \textit{++}, \textit{*},\textit{ ==}, \textit{!=}.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{queue.png}
+	\caption{Диграма классов \textit{Queue}}	
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{binarytree.png}
+	\caption{Диграма классов \textit{BinaryTree}}	
+\end{figure}
+
+Также были реализованы шаблонные функции, перегружающие оператор вывода в поток для отображения коллекций \textit{Queue} и \textit{BinaryTree} на экране.
+
+\subsection{Процедура получения исполняемых программных модулей}
+Программный код был скомпилирован с среде \textit{Visual Studio 2017}. Компиляция раздельная: исходный код программы разделён на несколько файлов. Для ускоренной компиляции программы используются предварительно откомпилированные заголовки \textit{"pch.h"}. Помимо этого никаких дополнительных ключей не добавлялось, использовались ключи, которые добавляются по умолчанию. 
+\subsection{Результаты тестирования}
+Тестирование программы представлено в файле \textit{"ContainerIterator.cpp"} в функции \textit{Main()}. Ожидаемый вывод функции:
+\begin{verbatim}
+1 2 -2 4 -4 5 -5 6 6 -6 123 234
+1 2 -2 4 -4 5 -5 6 6 -6 123 234
+
+1.7 0.333
+0.333
+1
+\end{verbatim}
+
+\newpage
+\setcounter{figure}{1} 
+\setcounter{section}{1} 
+\setcounter{subsection}{1} 
+
+\begin{center}
+	\section*{Приложение А}
+	полный код программы
+	\addcontentsline{toc}{section}{Приложение А}
+	
+\end{center}
+
+
+\renewcommand{\subsection}{\Asbuk{section}.\arabic{subsection}}
+\setcounter{subsection}{1} 
+\textbf{\subsection{  - BinaryTree.h}}
+\addcontentsline{toc}{subsection}{BinaryTree.h}
+\lstinputlisting[language=C++]{../ContainerIterator/BinaryTree.h}
+
+
+\setcounter{subsection}{2} 
+\textbf{\subsection{  - Queue.h}}
+\addcontentsline{toc}{subsection}{Queue.h}
+\lstinputlisting[language=C++]{../ContainerIterator/Queue.h}
+
+
+\setcounter{subsection}{3} 
+\textbf{\subsection{  - Node.h}}
+\addcontentsline{toc}{subsection}{Node.h}
+\lstinputlisting[language=C++]{../ContainerIterator/Node.h}
+
+
+\setcounter{subsection}{4} 
+\textbf{\subsection{  - Iterator.h}}
+\addcontentsline{toc}{subsection}{Iterator.h}
+\lstinputlisting[language=C++]{../ContainerIterator/Iterator.h}
+
+
+\setcounter{subsection}{5} 
+\textbf{\subsection{  - ContainerIterator.cpp}}
+\addcontentsline{toc}{subsection}{ContainerIterator.h}
+\lstinputlisting[language=C++]{../ContainerIterator/ContainerIterator.cpp}
+\end{document} % конец документа
